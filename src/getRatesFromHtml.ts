@@ -1,8 +1,10 @@
 import { Rate } from './types';
+import { parseHTML } from 'linkedom/worker';
 
 const TABLE_ROW_SELECTOR = '.data tr';
 
 export const getRatesFromHtml = (html: string): Rate[] => {
+  const { document } = parseHTML(html);
   const tableRows = document.querySelectorAll(TABLE_ROW_SELECTOR);
   const tableData: Rate[] = [];
 
