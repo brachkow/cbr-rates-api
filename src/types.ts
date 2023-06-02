@@ -3,3 +3,5 @@ export interface Rate {
   name: string;
   value: number;
 }
+
+export type Data = Record<string, Rate>;

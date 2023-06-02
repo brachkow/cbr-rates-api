@@ -1,4 +1,4 @@
-import { Rate } from './types';
+import { Rate, Data } from './types';
 import { parseHTML } from 'linkedom/worker';
 
 const TABLE_ROW_SELECTOR = '.data tr';
@@ -11,10 +11,10 @@ const round = (value: number, n: number = 5): number => {
   return Math.round(value * Math.pow(10, n)) / Math.pow(10, n);
 };
 
-export const getRatesFromHtml = (html: string): Rate[] => {
+export const getRatesFromHtml = (html: string): Data => {
   const { document } = parseHTML(html);
   const tableRows = document.querySelectorAll(TABLE_ROW_SELECTOR);
-  const tableData: Rate[] = [];
+  const tableData: Data = {};
 
   if (tableRows) {
     for (let i = 1; i < tableRows.length; i++) {
@@ -25,12 +25,12 @@ export const getRatesFromHtml = (html: string): Rate[] => {
         const amount = round(toNumber(rowData[2].innerText));
         const name = rowData[3].innerText;
         const value = round(toNumber(rowData[4].innerText) / amount);
-        const dataObject = {
+        const dataObject: Rate = {
           code,
           name,
           value,
         };
-        tableData.push(dataObject);
+        tableData[code] = dataObject;
       }
     }
   }
