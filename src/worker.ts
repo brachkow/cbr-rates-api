@@ -26,6 +26,10 @@ export default {
     const html = await response.text();
     const rates = getRatesFromHtml(html);
 
-    return new Response(JSON.stringify(rates));
+    return new Response(JSON.stringify(rates), {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   },
 };
