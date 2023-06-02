@@ -11,11 +11,14 @@ export const getRatesFromHtml = (html: string): Rate[] => {
       const row = tableRows[i];
       const rowData = row.getElementsByTagName('td');
       if (rowData.length > 0) {
+        const code = rowData[1].innerText;
+        const amount = Number(rowData[2].innerText);
+        const name = rowData[3].innerText;
+        const value = Number(rowData[4].innerText) / amount;
         const dataObject = {
-          code: rowData[1].innerText,
-          amount: Number(rowData[2].innerText),
-          name: rowData[3].innerText,
-          value: Number(rowData[4].innerText),
+          code,
+          name,
+          value,
         };
         tableData.push(dataObject);
       }
