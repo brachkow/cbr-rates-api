@@ -1,6 +1,6 @@
 # cbr-rates-api
 
-Bank of Russia currency exchange rates as API on cloudflare workers
+Bank of Russia currency exchange rates table as an API on cloudflare workers 
 
 ## API
 
