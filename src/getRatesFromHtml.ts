@@ -54,9 +54,10 @@ export const getRatesFromHtml = (html: string, outputMode: OutputMode = OutputMo
       const rowData = row.getElementsByTagName('td');
       if (rowData.length > 0) {
         const code = rowData[1].innerText;
-        const amount = round(toNumber(rowData[2].innerText));
+        const amount = toNumber(rowData[2].innerText);
         const name = rowData[3].innerText;
-        const value = round(toNumber(rowData[4].innerText) / amount);
+        const baseValue = toNumber(rowData[4].innerText);
+        const value = round(baseValue / amount);
         if (isFullData(outputMode, tableData)) {
           tableData = fullOutputGenerator({ data: tableData, code, value, name });
         } else if (outputMode === OutputMode.SIMPLE) {
