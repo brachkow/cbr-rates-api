@@ -1,24 +1,27 @@
-import { Data, SimpleData, DefaultData, Rate } from './types';
+import { Data, SimpleData, FullData, Rate } from './types';
 import { parseHTML } from 'linkedom/worker';
 import { toNumber } from './utils/toNumber';
 import { round } from './utils/round';
 
 const TABLE_ROW_SELECTOR = '.data tr';
 
-interface OutputParams<T> {
-  data: T;
-  code: string;
-  value: number;
-  name: string;
-}
-
-export const simpleOutputGenerator = ({ data, code, value }: OutputParams<SimpleData>): SimpleData => {
+export const simpleOutputGenerator = ({ data, code, value }: { data: SimpleData; code: string; value: number }): SimpleData => {
   data[code] = value;
 
   return data;
 };
 
-export const defaultOutputGenerator = ({ data, code, value, name }: OutputParams<DefaultData>): DefaultData => {
+export const fullOutputGenerator = ({
+  data,
+  code,
+  value,
+  name,
+}: {
+  data: FullData;
+  code: string;
+  value: number;
+  name: string;
+}): FullData => {
   data[code] = {
     code,
     name,
@@ -28,13 +31,19 @@ export const defaultOutputGenerator = ({ data, code, value, name }: OutputParams
   return data;
 };
 
-type OutputGenerator = typeof simpleOutputGenerator | typeof defaultOutputGenerator;
+type OutputGenerator = typeof simpleOutputGenerator | typeof fullOutputGenerator;
 
-const isSimpleData = (data: Data): data is SimpleData => {
-  return typeof Object.values(data)[0] === 'number';
+enum OutputMode {
+  SIMPLE = 'simple',
+  FULL = 'full',
+  DEFAULT = 'default',
+}
+
+const isFullData = (outputMode: OutputMode, data: ReturnType<OutputGenerator>): data is FullData => {
+  return [OutputMode.DEFAULT, OutputMode.FULL].includes(outputMode);
 };
 
-export const getRatesFromHtml = (html: string, output: OutputGenerator = defaultOutputGenerator): Data => {
+export const getRatesFromHtml = (html: string, outputMode: OutputMode = OutputMode.DEFAULT): Data => {
   const { document } = parseHTML(html);
   const tableRows = document.querySelectorAll(TABLE_ROW_SELECTOR);
   let tableData: ReturnType<OutputGenerator> = {};
@@ -48,10 +57,10 @@ export const getRatesFromHtml = (html: string, output: OutputGenerator = default
         const amount = round(toNumber(rowData[2].innerText));
         const name = rowData[3].innerText;
         const value = round(toNumber(rowData[4].innerText) / amount);
-        if (isSimpleData(tableData)) {
-          tableData = output({ data: tableData, code, value, name });
-        } else {
-          tableData = output({ data: tableData, code, value, name });
+        if (isFullData(outputMode, tableData)) {
+          tableData = fullOutputGenerator({ data: tableData, code, value, name });
+        } else if (outputMode === OutputMode.SIMPLE) {
+          tableData = simpleOutputGenerator({ data: tableData, code, value });
         }
       }
     }

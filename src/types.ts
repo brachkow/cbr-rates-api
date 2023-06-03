@@ -6,6 +6,6 @@ export interface Rate {
 
 export type SimpleData = Record<string, number>;
 
-export type DefaultData = Record<string, Rate>;
+export type FullData = Record<string, Rate>;
 
-export type Data = SimpleData | DefaultData;
+export type Data = SimpleData | FullData;
