@@ -1,4 +1,5 @@
 import { getRatesFromHtml } from './getRatesFromHtml';
+import { OutputMode } from './types';
 
 export interface Env {
   // Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
@@ -23,8 +24,12 @@ export default {
       method: 'GET',
     });
 
+    const url = new URL(request.url);
+
+    const mode = url.searchParams.get('mode') as OutputMode;
+
     const html = await response.text();
-    const rates = getRatesFromHtml(html);
+    const rates = mode ? getRatesFromHtml(html, mode) : getRatesFromHtml(html);
 
     return new Response(JSON.stringify(rates), {
       headers: {
