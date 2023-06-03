@@ -1,15 +1,9 @@
 import { Rate, Data } from './types';
 import { parseHTML } from 'linkedom/worker';
+import { toNumber } from './utils/toNumber';
+import { round } from './utils/round';
 
 const TABLE_ROW_SELECTOR = '.data tr';
-
-const toNumber = (value: string): number => {
-  return parseFloat(value.replace(',', '.'));
-};
-
-const round = (value: number, n: number = 5): number => {
-  return Math.round(value * Math.pow(10, n)) / Math.pow(10, n);
-};
 
 export const getRatesFromHtml = (html: string): Data => {
   const { document } = parseHTML(html);
