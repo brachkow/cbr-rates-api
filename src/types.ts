@@ -4,4 +4,8 @@ export interface Rate {
   value: number;
 }
 
-export type Data = Record<string, Rate>;
+export type SimpleData = Record<string, number>;
+
+export type DefaultData = Record<string, Rate>;
+
+export type Data = SimpleData | DefaultData;
